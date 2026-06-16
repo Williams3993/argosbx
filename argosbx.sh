@@ -616,7 +616,7 @@ fi
 if [ -n "$ssp" ]; then
 ssp=sspt
 if [ ! -e "$HOME/agsbx/sskey" ]; then
-sskey=$("$HOME/agsbx/sing-box" generate rand 16 --base64)
+sskey=$("$HOME/agsbx/sing-box" generate rand 32 --base64)
 echo "$sskey" > "$HOME/agsbx/sskey"
 fi
 if [ -z "$port_ss" ] && [ ! -e "$HOME/agsbx/port_ss" ]; then
@@ -634,7 +634,7 @@ cat >> "$HOME/agsbx/sb.json" <<EOF
             "tag":"ss-2022",
             "listen": "::",
             "listen_port": $port_ss,
-            "method": "2022-blake3-aes-128-gcm",
+            "method": "2022-blake3-chacha20-poly1305",
             "password": "$sskey"
     },  
 EOF
@@ -1332,7 +1332,7 @@ fi
 if grep ss-2022 "$HOME/agsbx/sb.json" >/dev/null 2>&1; then
 echo "💣【 Shadowsocks-2022 】节点信息如下："
 port_ss=$(cat "$HOME/agsbx/port_ss")
-ss_link="ss://$(echo -n "2022-blake3-aes-128-gcm:$sskey@$server_ip:$port_ss" | base64 -w0)#${sxname}Shadowsocks-2022-$hostname"
+ss_link="ss://$(echo -n "2022-blake3-chacha20-poly1305:$sskey@$server_ip:$port_ss" | base64 -w0)#${sxname}Shadowsocks-2022-$hostname"
 echo "$ss_link" >> "$HOME/agsbx/jhsub.txt"
 echo "$ss_link"
 echo
@@ -1343,7 +1343,7 @@ cat <<EOF
        "tag": "${sxname}Shadowsocks-2022-$hostname",
        "server": "$server_ip",
        "server_port": $port_ss,
-       "method": "2022-blake3-aes-128-gcm",
+       "method": "2022-blake3-chacha20-poly1305",
        "password": "$sskey",
        "udp_over_tcp": {
         "enabled": true,
@@ -1361,7 +1361,7 @@ cat <<EOF
   type: ss
   server: $server_ip
   port: $port_ss
-  cipher: 2022-blake3-aes-128-gcm
+  cipher: 2022-blake3-chacha20-poly1305
   password: "$sskey"
   udp: true
   udp-over-tcp: true
